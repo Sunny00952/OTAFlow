@@ -112,12 +112,12 @@
       <div class="row justify-content-center">
         <div class="col-lg-12 ml-auto">
           <p class="legend lead">
-            &nbsp; Expressive speech synthesis aims to synthesize speech with richer emotional fluctuations and stylistic variations to improve the speech's human-like quality. Although recent methods have achieved impressive progress, two challenges still exist: (1) the one-to-many problem from text prompts to speeches, and (2) the effective control of complex style factors. To this end, we propose an expressive text-to-speech (TTS) model OTAFlow, based on Optimal Transport guided style Alignment and conditional Flow matching (CFM), which uses reference speech or natural language to control the style of synthesized speech. To address the problem of aligning language prompt features and speech features, especially the one-to-many problem from prompts to speech, we introduce optimal transport to measure the modality gap, and align the speech feature and prompts feature of CLAP via dual-adapter mechanism. We inject style features into the CFM based non-autoregressive TTS model via Adaptive Layer Normalization in the diffusion transformer. The results of the experiment show that our model achieves significant improvements in both speech quality and naturalness.
+            &nbsp; Natural language prompts offer a highly flexible interface for expressive text-to-speech (TTS), yet cross-modal gaps and one-to-many mapping problem hinder reliable style control. To address this, we propose OTAFlow, a novel hierarchical cross-modal style modeling framework. First, optimal transport alignment, contrastive learning, and multi-task supervision are jointly optimized to construct a unified style space that preserves instance-level correspondence and expressive factor separability. Second, a conditional flow matching module is introduced to capture the residual modality gap, explicitly addressing the one-to-many challenge by generating diverse acoustic style embeddings from a single prompt. When plugged into a downstream TTS backbone, evaluations show that our method substantially outperforms baseline models in fine-grained style retrieval and synthesized style accuracy, effectively delivering diverse and controllable expressive speech.
           <br><br>
         </div>
         <div class="text-center">
           <br>
-          <img width="100%" src=".\otetts2.png"/>
+          <img width="100%" src=".\OTAflow_new.png"/>
           <br>
           <em>OTAFlow  Overview</em>
           <br>
