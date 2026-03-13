@@ -2,98 +2,177 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <style type="text/css">
-    a:link { color: black; text-decoration: none; }
-    a:visited { color: black; text-decoration: none; }
-    a:hover { color: blue; text-decoration: underline; }
-
-    .table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 0 auto; }
-    .table td { width: 33.33% !important; padding: 10px; text-align: center; }
-    .table audio { width: 100% !important; max-width: none; }
-
-    #div2, #nonparallel_div { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
-
-    .table-responsive { display: table; width: 100%; margin-bottom: 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  </style>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
   <meta name="description" content=""/>
   <meta name="author" content=""/>
   <title>OTAFlow Demo</title>
 
-  <!-- 免费 FontAwesome 图标 -->
+  <style type="text/css">
+    a:link { color: black; text-decoration: none; }
+    a:visited { color: black; text-decoration: none; }
+    a:hover { color: blue; text-decoration: underline; }
+
+    .section-wrapper {
+      width: 100%;
+      max-width: 3000px;
+      margin: 0 auto;
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+
+    .experiment-block {
+      margin-bottom: 52px;
+    }
+
+    .experiment-subtitle {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .audio-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 auto;
+      table-layout: fixed;
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .audio-table th,
+    .audio-table td {
+      border: 1px solid #d0d0d0;
+      padding: 14px 12px;
+      vertical-align: middle;
+      text-align: center;
+      word-break: break-word;
+      color: #222;
+      font-size: 15px;
+    }
+
+    .audio-table th {
+      background: #f3f3f3;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .audio-table .text-col,
+    .audio-table .prompt-col {
+      text-align: left;
+      line-height: 1.7;
+      font-size: 16px;
+      color: #222;
+    }
+
+    .audio-table .ref-cell {
+      min-height: 220px;
+    }
+
+    .audio-table audio {
+      width: 100%;
+      min-width: 150px;
+      max-width: 230px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .ref-label {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 10px;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .visualization-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+
+    .visualization-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+    }
+
+    .pdf-frame {
+      width: 100%;
+      height: 850px;
+      border: 1px solid #d9d9d9;
+      border-radius: 10px;
+      background: #fff;
+      display: none;
+    }
+
+    .figure-caption {
+      text-align: center;
+      margin-top: 14px;
+      font-style: italic;
+      color: #f8f9fa;
+      font-size: 16px;
+    }
+
+    .note-text {
+      margin-top: 10px;
+      text-align: center;
+      color: #dbe4ee;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .pdf-fallback {
+      text-align: center;
+      color: #333;
+      padding: 24px;
+      line-height: 1.8;
+    }
+  </style>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
-  <!-- 主主题样式（含 Bootstrap） -->
   <link href="css/styles.css" rel="stylesheet">
-  <!-- 自定义字体 -->
   <link rel="stylesheet" href="css/heading.css">
   <link rel="stylesheet" href="css/body.css">
-  <!-- Bootstrap 滑块样式 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" integrity="sha512-3q8fi8M0VS+X/3n64Ndpp6Bit7oXSiyCnzmlx6IDBLGlY5euFySyJ46RUlqIVs0DPCGOypqP8IRk/EyPvU28mQ==" crossorigin="anonymous" />
-
-  <script>
-    /**
-     * 通用音频表格生成函数
-     * config 结构：
-     *   dir        : 音频根目录
-     *   sample     : { id, script, emotion? }
-     *   models     : 二维数组，每行代表一行模型
-     *   headerType : 'emotion' | 'script' | 'both'
-     */
-    function createAudioTable(config) {
-      let html = '<table class="table table-responsive mb4" style="width:100%;margin:0 auto;background:white;border-radius:20px;">';
-
-      /* Headers */
-      html += '<thead><tr><th colspan="5">';
-      if (config.headerType === 'both') {
-        html += `<div class="text-left">Emotion:<i>${config.sample.emotion}</i></div>`;
-        html += `<div class="text-left">Text:<i>${config.sample.script}</i></div>`;
-      } else if (config.headerType === 'script') {
-        html += `<div class="text-left">Text:<i>${config.sample.script}</i></div>`;
-      }
-      html += '</th></tr></thead><tbody>';
-
-      config.models.forEach(rowModels => {
-        html += '<tr>';
-        rowModels.forEach(model => {
-          html += '<td style="vertical-align:top;text-align:center;width:20%;">';
-          html += `<p>${model.name}</p>`;
-          html += `<audio controls style="width:100%">
-                     <source src="${config.dir}/${model.folder}/${config.sample.id}.wav" type="audio/wav">
-                   </audio>`;
-          html += '</td>';
-        });
-        const remainder = 5 - rowModels.length;
-        if (remainder > 0) {
-          html += `<td colspan="${remainder}" style="width:${remainder*20}%"></td>`;
-        }
-        html += '</tr>';
-      });
-
-      html += '</tbody></table>';
-      return html;
-    }
-  </script>
 </head>
 
 <body id="page-top">
-  <!-- Nav -->
+  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
     <div class="container">
       <a class="navbar-brand js-scroll-trigger" href="#page-top">OTAFlow</a>
-      <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="切换导航">
-        菜单 <i class="fas fa-bars"></i>
+      <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarResponsive"
+              aria-controls="navbarResponsive"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+        Menu <i class="fas fa-bars"></i>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#abstract">Abstract</a></li>
-          <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#comparisons">Comparisons</a></li>
-          <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#ablations">Ablations</a></li>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#abstract">Abstract</a>
+          </li>
+          <li class="nav-item mx-0 mx-lg-1">
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#experiments">Experiments</a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Topic -->
+  <!-- Header -->
   <header class="masthead bg-white text-left">
     <div class="container d-flex align-items-center flex-column">
       <h1 class="masthead-heading mb-0">
@@ -109,170 +188,249 @@
         <h2 class="page-section-heading text-secondary mb-0 d-inline-block">Abstract</h2>
       </div>
       <div class="divider-custom"><div class="divider-custom"></div></div>
+
       <div class="row justify-content-center">
         <div class="col-lg-12 ml-auto">
           <p class="legend lead">
-            &nbsp;Natural language prompts offer a highly flexible interface for expressive text-to-speech (TTS), yet cross-modal gaps and one-to-many mapping problem hinder reliable style control. To address this, we propose OTAFlow, a novel hierarchical cross-modal style modeling framework. First, optimal transport alignment, contrastive learning, and multi-task supervision are jointly optimized to construct a unified style space that preserves instance-level correspondence and expressive factor separability. Second, a conditional flow matching module is introduced to capture the residual modality gap, explicitly addressing the one-to-many challenge by generating diverse acoustic style embeddings from a single prompt. When plugged into a downstream TTS backbone, evaluations show that our method substantially outperforms baseline models in fine-grained style retrieval and synthesized style accuracy, effectively delivering diverse and controllable expressive speech.
-          <br><br>
+            Natural language prompts provide a flexible interface for expressive text-to-speech (TTS), but cross-modal discrepancy and one-to-many mapping make reliable style control difficult. To address these issues, we propose OTAFlow, a hierarchical framework for cross-modal style modeling. First, optimal transport alignment, contrastive learning, and multi-task supervision are jointly optimized to construct a unified style space that preserves instance-level correspondence and disentangles expressive factors. Second, a conditional flow matching module is introduced to model the residual modality gap, enabling diverse acoustic style embeddings to be generated from a single prompt. When integrated into a downstream TTS backbone, OTAFlow demonstrates stronger style retrieval ability and more accurate style synthesis, producing expressive speech that is both diverse and controllable.
+          </p>
         </div>
+
         <div class="text-center">
           <br>
-          <img width="100%" src=".\OTAflow_new.png"/>
-          <br>
-          <em>OTAFlow  Overview</em>
-          <br>
+          <img width="100%" src="./OTAflow_new.png" alt="OTAFlow Overview"/>
         </div>
       </div>
     </div>
   </section>
 
-<script>
-function createTableForMainComparison(audioName, dir, script) {
-  const parallelExp = {
-    "Reference": "GT",
-    "SpotlightTTS": "SpotlightTTS",
-    "OTAFlow": "OTAFlow"
-  };
-
-  let html = '<table class="table table-responsive mb3" style="background:white;border-radius:20px;width:100%;margin:0 auto;table-layout:fixed;">'; // 添加 table-layout:fixed
-  html += '<thead><tr><th colspan="2" style="width:100%">'; // 改为 colspan="2"
-  html += '<div class="text-left">Text:<i>' + script.script + '</i></div>';
-  html += "</th></tr></thead><tbody>";
-
-  html += "<tr>";
-  ["Reference","SpotlightTTS", "OTAFlow"].forEach(modelName => {
-    html += '<td style="vertical-align:top;text-align:center;width:50%;min-width:250px;padding:20px;">'; // 添加宽度控制
-    html += "<p style='margin-bottom:15px;font-size:18px;'>" + modelName + "</p>";
-    html += `<audio controls style="width:100%;max-width:280px;margin:0 auto;display:block;"><source src="${dir}/${parallelExp[modelName]}/${audioName}.wav" type="audio/wav"></audio>`;
-    html += '</td>';
-  });
-  html += '</tr>'; // 移除注释的 colspan="3"
-
-  html += "</tbody></table>";
-  return html;
-}
-</script>
-
-  <!-- Comparisons -->
-  <section class="page-section bg-info text-white mb0" id="comparisons">
+  <!-- Experiments -->
+  <section class="page-section bg-info text-white mb-0" id="experiments">
     <div class="container">
       <div class="text-center">
-        <h2 class="page-section-heading d-inline-block text-white">Comparisons</h2>
+        <h2 class="page-section-heading d-inline-block text-white">Experiments</h2>
       </div>
       <div class="text-center"><br></div>
       <div class="divider-custom divider-light"><div class="divider-custom"></div></div>
 
-      <div class="row">
-        <div id="div2" class="col-12-auto mx-auto">
-          <script>
-            const dir = "./wavs/Parallel";
-            const audios = [
-              { id: "0015_000383", emotion: "愤怒", script: "This used to be jerrys occupation." },
-              { id: "0012_000732", emotion: "开心", script: "Who is been repeating all that hard stuff to you?" },
-              { id: "0018_001445", emotion: "惊讶", script: "The nastiest things they saw were the cobwebs." },
-              { id: "0020_001076", emotion: "悲伤", script: "Let's make the noise a snake." }
-            ];
-            audios.forEach(function(sample) {
-              const div = document.getElementById("div2");
-              const html = createTableForMainComparison(sample.id, dir, sample);
-              div.insertAdjacentHTML("beforeend", html);
-            });
-          </script>
+      <div class="section-wrapper">
+        <div class="experiment-block">
+          <div class="experiment-subtitle">Same Speaker Experiment</div>
+          <div id="same_speaker_table"></div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="experiment-subtitle">Instruct Reconstruction Experiment</div>
+          <div id="Instruct Reconstruction Experiment"></div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="experiment-subtitle">T-SNE Visualization</div>
+          <div class="visualization-container">
+            <img id="vizImage" class="visualization-image" src="result1.png" alt="Visualization result"/>
+            <object id="vizPdf" class="pdf-frame" data="result1.pdf" type="application/pdf">
+              <div class="pdf-fallback">
+                <p><strong>Visualization preview is unavailable.</strong></p>
+                <p>Please place <code>result1.png</code> or <code>result1.pdf</code> in the same folder as this HTML file.</p>
+              </div>
+            </object>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Ablations -->
-  <section class="page-section bg-secondary mb-0" id="ablations">
-    <div class="container">
-      <div class="text-center">
-        <h2 class="page-section-heading d-inline-block text-white">Ablations</h2>
-      </div>
-      <div class="text-center"><br></div>
-      <div class="divider-custom divider-light"><div class="divider-custom"></div></div>
+  <script>
+    function createSameSpeakerTable(rows) {
+      const referencePath = "results/gt2/4.wav";
 
-      <div class="row">
-        <div id="nonparallel_div" class="col-lg-auto ml-auto">
-          <script>
-            const nonParallelSamples = [
-              {
-                id: "0013_000380",
-                refText: "",
-                Script: "Yet Divine Scripture from time to time introduces angels so apparent as to be seen commonly by all; just as the angels who appeared to Abraham were seen by him and by his whole family, by Lot, and by the citizens of Sodom; in like manner the angel who appeared to Tobias was seen by all present."
-              },
-              {
-                id: "0017_001061",
-                refText: "",
-                Script: "Both the conditions and the complicity are documented in considerable detail."
-              },
-              {
-                id: "0015_001348",
-                refText: "the nastiest things they saw were the cobwebs .",
-                Script: "I put on my hat and walked out refreshed, having slept from five twenty until twelve, or six hours and forty minutes straight."
-              },
-              {
-                id: "0017_001337",
-                refText: "",
-                Script: "I will have a scoop of that exotic purple and turquoise sherbet."
-              }
-            ];
+      let html = `
+        <table class="audio-table">
+          <colgroup>
+            <col style="width: 22%;">
+            <col style="width: 19%;">
+            <col style="width: 29%;">
+            <col style="width: 22%;">
+            <col style="width: 22%;">
+            <col style="width: 22%;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Reference Audio</th>
+              <th class="text-col">Text</th>
+              <th class="prompt-col">Instruction</th>
+              <th>Our</th>
+              <th>IndexTTS2</th>
+              <th>CosyVoice2</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
 
-            const npModels = {
-              "Reference": "GT",
-              "A": "A",
-              "B": "B",
-              "C": "C",
-              "FULL": "FULL"
-            };
+      rows.forEach((row, index) => {
+        html += `<tr>`;
 
-            function createNonParallelTable(dir, sample) {
-              let html = '<table class="table table-responsive" style="background:white;border-radius:20px">';
-              html += '<thead><tr><th colspan="5" style="width:40%">';
-              html += '<div class="text-left">Text:<i>' + sample.Script + '</i></div>';
-              html += "</th></tr></thead><tbody>";
+        if (index === 0) {
+          html += `
+            <td rowspan="${rows.length}" class="ref-cell">
+              <audio controls>
+                <source src="${referencePath}" type="audio/wav">
+              </audio>
+            </td>
+          `;
+        }
 
-              html += "<tr>";
-              ["Reference","FULL"].forEach(model => {
-                html += '<td style="vertical-align:top;text-align:center;">';
-                html += "<p>" + model + "</p>";
-                html += '<audio controls><source src="' + dir + '/' + npModels[model] + '/' + sample.id + '.wav" type="audio/wav"></audio>';
-                html += '</td>';
-              });
-              html += '<td colspan="3"></td></tr>';
+        html += `
+          <td class="text-col">${row.text}</td>
+          <td class="prompt-col">${row.instruct}</td>
+          <td>
+            <audio controls>
+              <source src="${row.our}" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio controls>
+              <source src="${row.index2}" type="audio/wav">
+            </audio>
+          </td>
+          <td>
+            <audio controls>
+              <source src="${row.cosyvoice2}" type="audio/wav">
+            </audio>
+          </td>
+        `;
 
+        html += `</tr>`;
+      });
 
-              html += "<tr>";
-              ["A", "B", "C"].forEach(model => {
-                html += '<td style="vertical-align:top;text-align:center;">';
-                html += "<p>" + model + "</p>";
-                html += '<audio controls><source src="' + dir + '/' + npModels[model] + '/' + sample.id + '.wav" type="audio/wav"></audio>';
-                html += '</td>';
-              });
-              html += '<td colspan="2"></td></tr>';
+      html += `
+          </tbody>
+        </table>
+      `;
+      return html;
+    }
 
-              html += "</tbody></table>";
-              return html;
-            }
+    function createDifferentSpeakerTable(rows) {
+      let html = `
+        <table class="audio-table">
+          <colgroup>
+            <col style="width: 24%;">
+            <col style="width: 30%;">
+            <col style="width: 24%;">
+            <col style="width: 24%;">
+            <col style="width: 24%;">
+            <col style="width: 24%;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="text-col">Text</th>
+              <th class="prompt-col">Instruction</th>
+              <th>GT</th>
+              <th>Our</th>
+              <th>IndexTTS2</th>
+              <th>CosyVoice2</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
 
-            const nonParallelDir = "./wavs/NonParallel";
-            nonParallelSamples.forEach(sample => {
-              const divElem = document.getElementById("nonparallel_div");
-              const tableHtml = createNonParallelTable(nonParallelDir, sample);
-              divElem.insertAdjacentHTML("beforeend", tableHtml);
-            });
-          </script>
-        </div>
-      </div>
-    </div>
-  </section>
+      rows.forEach(row => {
+        html += `
+          <tr>
+            <td class="text-col">${row.text}</td>
+            <td class="prompt-col">${row.instruct}</td>
+            <td>
+              <audio controls>
+                <source src="${row.gt}" type="audio/wav">
+              </audio>
+            </td>
+            <td>
+              <audio controls>
+                <source src="${row.our}" type="audio/wav">
+              </audio>
+            </td>
+            <td>
+              <audio controls>
+                <source src="${row.index2}" type="audio/wav">
+              </audio>
+            </td>
+            <td>
+              <audio controls>
+                <source src="${row.cosyvoice2}" type="audio/wav">
+              </audio>
+            </td>
+          </tr>
+        `;
+      });
 
+      html += `
+          </tbody>
+        </table>
+      `;
+      return html;
+    }
 
+    const sameSpeakerRows = [
+      {
+        text: "All the way to China is home.",
+        instruct: "The dumbfounded male speaker's voice combines high pitch with normal speed and energy as he talks.",
+        our: "results/ourself/zs_instruct/1.wav",
+        index2: "results/index2/zero_shot/1.wav",
+        cosyvoice2: "results/cv2/zs_instruct/1.wav"
+      },
+      {
+        text: "Dear customer,welcome to our ship.",
+        instruct: "A man with a high-pitched voice speaks at a normal speed, his ecstatic energy subdued.",
+        our: "results/ourself/zs_instruct/47.wav",
+        index2: "results/index2/zero_shot/47.wav",
+        cosyvoice2: "results/cv2/zs_instruct/47.wav"
+      },
+      {
+        text: "A raging fire was-in his eyes.",
+        instruct: "A happy male speaker, employing a high pitch, maintains a regular speaking speed and energy level during conversation.",
+        our: "results/ourself/zs_instruct/166.wav",
+        index2: "results/index2/zero_shot/166.wav",
+        cosyvoice2: "results/cv2/zs_instruct/166.wav"
+      }
+    ];
+
+    const differentSpeakerRows = [
+      {
+        text: "Tom now let our arrows fly!",
+        instruct: "A hushed and high-pitched voice escapes her heartbroken lips.",
+        gt: "results/gt2/10.wav",
+        our: "results/ourself/instruct/10.wav",
+        index2: "results/index2/instruct/10.wav",
+        cosyvoice2: "results/cv2/instruct/10.wav"
+      },
+      {
+        text: "Our thanks to God's oath.",
+        instruct: "With a regular pitch, the man talks at a moderate tempo, his downcast energy level slightly subdued.",
+        gt: "results/gt2/202.wav",
+        our: "results/ourself/instruct/202.wav",
+        index2: "results/index2/instruct/202.wav",
+        cosyvoice2: "results/cv2/instruct/202.wav"
+      },
+      {
+        text: "From August eighteenth, of their divorce.",
+        instruct: "She whispered slowly, her miserable voice possessing a high pitch and a distinct lack of energy.",
+        gt: "results/gt2/266.wav",
+        our: "results/ourself/instruct/266.wav",
+        index2: "results/index2/instruct/266.wav",
+        cosyvoice2: "results/cv2/instruct/266.wav"
+      }
+    ];
+
+    document.getElementById("same_speaker_table").innerHTML = createSameSpeakerTable(sameSpeakerRows);
+    document.getElementById("Instruct Reconstruction Experiment").innerHTML = createDifferentSpeakerTable(differentSpeakerRows);
+
+    const vizImage = document.getElementById("vizImage");
+    const vizPdf = document.getElementById("vizPdf");
+
+    vizImage.onerror = function () {
+      vizImage.style.display = "none";
+      vizPdf.style.display = "block";
+    };
+  </script>
 </body>
-
 </html>
-
-
-
-
-
