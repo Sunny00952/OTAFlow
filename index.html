@@ -143,52 +143,6 @@
   <link href="css/styles.css" rel="stylesheet">
   <link rel="stylesheet" href="css/heading.css">
   <link rel="stylesheet" href="css/body.css">
-  <!-- Bootstrap 滑块样式 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" integrity="sha512-3q8fi8M0VS+X/3n64Ndpp6Bit7oXSiyCnzmlx6IDBLGlY5euFySyJ46RUlqIVs0DPCGOypqP8IRk/EyPvU28mQ==" crossorigin="anonymous" />
-
-  <script>
-    /**
-     * 通用音频表格生成函数
-     * config 结构
-     *   dir        : 音频根目录
-     *   sample     : { id, script, emotion? }
-     *   models     : 二维数组，每行代表一行模型
-     *   headerType : 'emotion' | 'script' | 'both'
-     */
-    function createAudioTable(config) {
-      let html = '<table class="table table-responsive mb4" style="width:100%;margin:0 auto;background:white;border-radius:20px;">';
-
-      /* Headers */
-      html += '<thead><tr><th colspan="5">';
-      if (config.headerType === 'both') {
-        html += `<div class="text-left">Emotion:<i>${config.sample.emotion}</i></div>`;
-        html += `<div class="text-left">Text:<i>${config.sample.script}</i></div>`;
-      } else if (config.headerType === 'script') {
-        html += `<div class="text-left">Text:<i>${config.sample.script}</i></div>`;
-      }
-      html += '</th></tr></thead><tbody>';
-
-      config.models.forEach(rowModels => {
-        html += '<tr>';
-        rowModels.forEach(model => {
-          html += '<td style="vertical-align:top;text-align:center;width:20%;">';
-          html += `<p>${model.name}</p>`;
-          html += `<audio controls style="width:100%">
-                     <source src="${config.dir}/${model.folder}/${config.sample.id}.wav" type="audio/wav">
-                   </audio>`;
-          html += '</td>';
-        });
-        const remainder = 5 - rowModels.length;
-        if (remainder > 0) {
-          html += `<td colspan="${remainder}" style="width:${remainder*20}%"></td>`;
-        }
-        html += '</tr>';
-      });
-
-      html += '</tbody></table>';
-      return html;
-    }
-  </script>
 </head>
 
 <body id="page-top">
@@ -261,7 +215,7 @@
 
       <div class="section-wrapper">
         <div class="experiment-block">
-          <div class="experiment-subtitle">Same Speaker Experiment</div>
+          <div class="experiment-subtitle">Same Speaker</div>
           <div id="same_speaker_table"></div>
         </div>
 
@@ -271,7 +225,7 @@
         </div>
 
         <div class="experiment-block">
-          <div class="experiment-subtitle">T-SNE Visualization</div>
+          <div class="experiment-subtitle">Visualization</div>
           <div class="visualization-container">
             <img id="vizImage" class="visualization-image" src="result1.png" alt="Visualization result"/>
             <object id="vizPdf" class="pdf-frame" data="result1.pdf" type="application/pdf">
@@ -480,9 +434,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
